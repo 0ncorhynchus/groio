@@ -40,3 +40,9 @@ impl FromStr for Atom {
         })
     }
 }
+
+pub struct Structure {
+    pub title: String,
+    pub box_size: Vector3d,
+    pub atoms: Vec<Atom>,
+}
