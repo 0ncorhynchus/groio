@@ -8,7 +8,7 @@ pub struct Vector3d {
 }
 
 impl Vector3d {
-    fn new(x: f32, y: f32, z: f32) -> Self {
+    pub fn new(x: f32, y: f32, z: f32) -> Self {
         Vector3d { x: x, y: y, z: z }
     }
 }
