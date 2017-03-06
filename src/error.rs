@@ -2,12 +2,14 @@ use std::io;
 use std::num;
 use std::result;
 
+#[derive(Debug)]
 pub enum ParseError {
     Integer(num::ParseIntError),
     Float(num::ParseFloatError),
     InvalidStatement
 }
 
+#[derive(Debug)]
 pub enum Error {
     IO(io::Error),
     Parse(ParseError),
