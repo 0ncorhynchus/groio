@@ -4,12 +4,14 @@ use std::result;
 
 pub enum ParseError {
     Integer(num::ParseIntError),
-    Float(num::ParseFloatError)
+    Float(num::ParseFloatError),
+    InvalidStatement
 }
 
 pub enum Error {
     IO(io::Error),
     Parse(ParseError),
+    LackOfLine,
 }
 
 impl From<io::Error> for Error {
