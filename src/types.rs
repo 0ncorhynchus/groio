@@ -45,6 +45,16 @@ pub struct Structure {
     pub box_size: Vector3d,
 }
 
+impl fmt::Display for Structure {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        write!(f, "{}\n", self.title)?;
+        for atom in &self.atoms {
+            write!(f, "{}\n", atom)?;
+        }
+        write!(f, "{}", self.box_size)
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -66,6 +76,16 @@ mod tests {
             velocity: Vector3d::new(4.0, 5.0, 6.0)
         };
         assert_eq!("    1ALA      H    1   1.000   2.000   3.000   4.000   5.000   6.000", atom.to_string());
+    }
+
+    #[test]
+    fn test_structure_to_string() {
+        let structure = Structure {
+            title: "The Title".to_string(),
+            atoms: Vec::new(),
+            box_size: Vector3d::new(1.0, 2.0, 3.0)
+        };
+        assert_eq!("The Title\n   1.000   2.000   3.000", structure.to_string());
     }
 }
 
