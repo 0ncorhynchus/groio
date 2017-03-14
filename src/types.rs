@@ -14,7 +14,10 @@ impl Vector3d {
 
 impl fmt::Display for Vector3d {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:>8.3}{:>8.3}{:>8.3}", self.x, self.y, self.z)
+        let prec = f.precision().unwrap_or(4);
+        let width = f.width().unwrap_or(10);
+        write!(f, "{:width$.prec$}{:width$.prec$}{:width$.prec$}",
+               self.x, self.y, self.z, width=width, prec=prec)
     }
 }
 
@@ -29,7 +32,7 @@ pub struct Atom {
 
 impl fmt::Display for Atom {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:>5}{:<5}{:>5}{:>5}{}{}",
+        write!(f, "{:>5}{:<5}{:>5}{:>5}{:>8.3}{:>9.4}",
                self.res_number,
                self.res_name,
                self.atom_name,
@@ -47,9 +50,9 @@ pub struct Structure {
 
 impl fmt::Display for Structure {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{}\n", self.title)?;
+        writeln!(f, "{}", self.title)?;
         for atom in &self.atoms {
-            write!(f, "{}\n", atom)?;
+            writeln!(f, "{}", atom)?;
         }
         write!(f, "{}", self.box_size)
     }
@@ -62,7 +65,8 @@ mod tests {
     #[test]
     fn test_vector_to_string() {
         let vector = Vector3d::new(1.0, 2.0, 3.0);
-        assert_eq!("   1.000   2.000   3.000", vector.to_string());
+        assert_eq!("    1.0000    2.0000    3.0000",
+                   format!("{}", vector));
     }
 
     #[test]
@@ -75,7 +79,7 @@ mod tests {
             position: Vector3d::new(1.0, 2.0, 3.0),
             velocity: Vector3d::new(4.0, 5.0, 6.0)
         };
-        assert_eq!("    1ALA      H    1   1.000   2.000   3.000   4.000   5.000   6.000", atom.to_string());
+        assert_eq!("    1ALA      H    1   1.000   2.000   3.000   4.0000   5.0000   6.0000", atom.to_string());
     }
 
     #[test]
@@ -85,7 +89,7 @@ mod tests {
             atoms: Vec::new(),
             box_size: Vector3d::new(1.0, 2.0, 3.0)
         };
-        assert_eq!("The Title\n   1.000   2.000   3.000", structure.to_string());
+        assert_eq!("The Title\n    1.0000    2.0000    3.0000", structure.to_string());
     }
 }
 
