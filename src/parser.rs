@@ -47,10 +47,6 @@ impl FromStr for Structure {
         for _ in 0..num_atoms {
             atoms.push(next_line(&mut lines)?.parse()?);
         }
-        Ok(Structure {
-            title: title,
-            atoms: atoms,
-            box_size: parse_box_size(next_line(&mut lines)?)?,
-        })
+        Ok(Structure::new(title, atoms, parse_box_size(next_line(&mut lines)?)?))
     }
 }
