@@ -16,9 +16,9 @@ pub struct Atom {
 }
 
 pub struct Structure {
-    pub title: String,
-    pub atoms: Vec<Atom>,
-    pub box_size: Vector3d,
+    title: String,
+    atoms: Vec<Atom>,
+    box_size: Vector3d,
 }
 
 impl Vector3d {
@@ -49,8 +49,26 @@ impl fmt::Display for Atom {
 }
 
 impl Structure {
+    pub fn new(title: String,
+               atoms: Vec<Atom>,
+               box_size: Vector3d) -> Structure {
+        Structure {
+            title: title,
+            atoms: atoms,
+            box_size: box_size
+        }
+    }
+
+    pub fn title(&self) -> &str {
+        &self.title
+    }
+
     pub fn atoms(&self) -> &Vec<Atom> {
         &self.atoms
+    }
+
+    pub fn box_size(&self) -> &Vector3d {
+        &self.box_size
     }
 }
 
@@ -90,19 +108,18 @@ mod tests {
 
     #[test]
     fn test_structure_to_string() {
-        let structure = Structure {
-            title: "The Title".to_string(),
-            atoms: Vec::new(),
-            box_size: Vector3d::new(1.0, 2.0, 3.0)
-        };
+        let structure = Structure::new(
+            "The Title".to_string(),
+            Vec::new(),
+            Vector3d::new(1.0, 2.0, 3.0));
         assert_eq!("The Title\n    1.0000    2.0000    3.0000", structure.to_string());
     }
 
     #[test]
     fn test_structure_atoms() {
-        let structure = Structure {
-            title: "The Title".to_string(),
-            atoms: vec![
+        let structure = Structure::new(
+            "The Title".to_string(),
+            vec![
                 Atom {
                     res_number: 1,
                     res_name: "ALA".to_string(),
@@ -112,8 +129,8 @@ mod tests {
                     velocity: Vector3d::new(4.0, 5.0, 6.0)
                 }
             ],
-            box_size: Vector3d::new(11.0, 12.0, 13.0)
-        };
+            Vector3d::new(11.0, 12.0, 13.0)
+        );
         assert_eq!(1, structure.atoms().len());
     }
 }
