@@ -1,11 +1,14 @@
 use std::fmt;
+use std::collections::HashMap;
 
+#[derive(Clone)]
 pub struct Vector3d {
     pub x: f32,
     pub y: f32,
     pub z: f32,
 }
 
+#[derive(Clone)]
 pub struct Atom {
     pub res_number:  i32,
     pub res_name:    String,
@@ -15,9 +18,11 @@ pub struct Atom {
     pub velocity:    Vector3d,
 }
 
+pub type Residue = HashMap<String, Atom>;
+
 pub struct Structure {
     title: String,
-    atoms: Vec<Atom>,
+    residues: Vec<Residue>,
     box_size: Vector3d,
 }
 
@@ -48,13 +53,20 @@ impl fmt::Display for Atom {
     }
 }
 
+fn split_to_residue(atoms: Vec<Atom>) -> Vec<Residue> {
+    let max_size = atoms.iter().map(|atom| atom.res_number).max().unwrap_or(-1) + 1;
+    let mut residues = vec![Residue::new(); max_size as usize];
+    for atom in atoms {
+        residues[atom.res_number as usize].insert(atom.atom_name.clone(), atom);
+    }
+    residues
+}
+
 impl Structure {
-    pub fn new(title: String,
-               atoms: Vec<Atom>,
-               box_size: Vector3d) -> Structure {
+    pub fn new(title: String, atoms: Vec<Atom>, box_size: Vector3d) -> Structure {
         Structure {
             title: title,
-            atoms: atoms,
+            residues: split_to_residue(atoms),
             box_size: box_size
         }
     }
@@ -64,9 +76,15 @@ impl Structure {
     }
 
     pub fn atoms(&self) -> Vec<&Atom> {
-        let mut atoms = vec![];
-        for i in 0..self.atoms.len() {
-            atoms.push(&self.atoms[i]);
+        let mut atoms = Vec::new();
+        for i in 0..self.residues.len() {
+            let residue = &self.residues[i];
+            for key in residue.keys() {
+                match residue.get(key) {
+                    Some(atom) => atoms.push(atom),
+                    None => {}
+                }
+            }
         }
         atoms.sort_by_key(|&atom| atom.atom_number);
         atoms
@@ -80,7 +98,7 @@ impl Structure {
 impl fmt::Display for Structure {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(f, "{}", self.title)?;
-        for atom in &self.atoms {
+        for atom in &self.atoms() {
             writeln!(f, "{}", atom)?;
         }
         write!(f, "{}", self.box_size)
@@ -118,6 +136,24 @@ mod tests {
             Vec::new(),
             Vector3d::new(1.0, 2.0, 3.0));
         assert_eq!("The Title\n    1.0000    2.0000    3.0000", structure.to_string());
+    }
+
+    #[test]
+    fn test_structure_new() {
+        Structure::new(
+            "The Title".to_string(),
+            vec![
+                Atom {
+                    res_number: 1,
+                    res_name: "ALA".to_string(),
+                    atom_name: "H".to_string(),
+                    atom_number: 1,
+                    position: Vector3d::new(1.0, 2.0, 3.0),
+                    velocity: Vector3d::new(4.0, 5.0, 6.0)
+                }
+            ],
+            Vector3d::new(11.0, 12.0, 13.0)
+        );
     }
 
     #[test]
