@@ -90,6 +90,10 @@ impl Structure {
         atoms
     }
 
+    pub fn residues(&self) -> &Vec<Residue> {
+        &self.residues
+    }
+
     pub fn box_size(&self) -> &Vector3d {
         &self.box_size
     }
