@@ -63,8 +63,13 @@ impl Structure {
         &self.title
     }
 
-    pub fn atoms(&self) -> &Vec<Atom> {
-        &self.atoms
+    pub fn atoms(&self) -> Vec<&Atom> {
+        let mut atoms = vec![];
+        for i in 0..self.atoms.len() {
+            atoms.push(&self.atoms[i]);
+        }
+        atoms.sort_by_key(|&atom| atom.atom_number);
+        atoms
     }
 
     pub fn box_size(&self) -> &Vector3d {
