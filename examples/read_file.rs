@@ -11,8 +11,9 @@ fn main() {
     let structure: Structure = s.parse().unwrap();
 
     println!("title => {}", structure.title());
-    println!("num atoms => {}", structure.atoms().len());
-    println!("first atom => {}", structure.atoms()[0]);
-    println!("second atom => {}", structure.atoms()[1]);
+    let atoms = structure.atoms();
+    println!("num atoms => {}", atoms.len());
+    println!("first atom => {}", atoms[0]);
+    println!("second atom => {}", atoms[1]);
     println!("box size => {}", structure.box_size());
 }
