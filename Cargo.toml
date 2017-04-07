@@ -4,3 +4,4 @@ version = "0.1.0"
 authors = ["Suguru Kato <salmon.bioinformatics@gmail.com>"]
 
 [dependencies]
+biost = { git = "https://github.com/0ncorhynchus/biost.git" }

@@ -1,3 +1,5 @@
+extern crate biost;
+
 mod error;
 mod types;
 mod parser;

@@ -1,4 +1,5 @@
 use std::str::{FromStr, Lines};
+use biost::Vector3d;
 use error::*;
 use types::*;
 

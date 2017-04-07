@@ -15,5 +15,6 @@ fn main() {
     println!("num atoms => {}", atoms.len());
     println!("first atom => {}", atoms[0]);
     println!("second atom => {}", atoms[1]);
-    println!("box size => {}", structure.box_size());
+    let box_size = structure.box_size();
+    println!("box size => ({}, {}, {})", box_size.x, box_size.y, box_size.z);
 }
