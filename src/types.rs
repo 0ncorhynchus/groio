@@ -102,7 +102,9 @@ impl Structure {
 impl fmt::Display for Structure {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         writeln!(f, "{}", self.title)?;
-        for atom in &self.atoms() {
+        let atoms = self.atoms();
+        writeln!(f, "{}", atoms.len())?;
+        for atom in atoms {
             writeln!(f, "{}", atom)?;
         }
         write!(f, "{}", self.box_size)
