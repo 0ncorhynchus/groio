@@ -54,10 +54,10 @@ impl fmt::Display for Atom {
 }
 
 fn split_to_residue(atoms: Vec<Atom>) -> Vec<Residue> {
-    let max_size = atoms.iter().map(|atom| atom.res_number).max().unwrap_or(-1) + 1;
+    let max_size = atoms.iter().map(|atom| atom.res_number).max().unwrap_or(0);
     let mut residues = vec![Residue::new(); max_size as usize];
     for atom in atoms {
-        residues[atom.res_number as usize].insert(atom.atom_name.clone(), atom);
+        residues[(atom.res_number - 1) as usize].insert(atom.atom_name.clone(), atom);
     }
     residues
 }
@@ -177,6 +177,25 @@ mod tests {
             Vector3d::new(11.0, 12.0, 13.0)
         );
         assert_eq!(1, structure.atoms().len());
+    }
+
+    #[test]
+    fn test_strucutre_residues() {
+        let structure = Structure::new(
+            "The Title".to_string(),
+            vec![
+                Atom {
+                    res_number: 1,
+                    res_name: "ALA".to_string(),
+                    atom_name: "H".to_string(),
+                    atom_number: 1,
+                    position: Vector3d::new(1.0, 2.0, 3.0),
+                    velocity: Vector3d::new(4.0, 5.0, 6.0)
+                }
+            ],
+            Vector3d::new(11.0, 12.0, 13.0)
+        );
+        assert_eq!(1, structure.residues().len());
     }
 }
 
