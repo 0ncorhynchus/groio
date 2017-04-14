@@ -12,7 +12,12 @@ pub struct Atom {
     pub velocity:    Vector3d,
 }
 
-pub type Residue = HashMap<String, Atom>;
+#[derive(Clone)]
+pub struct Residue {
+    pub number: i32,
+    pub name: String,
+    pub atoms: HashMap<String, Atom>,
+}
 
 pub struct Structure {
     title: String,
@@ -36,20 +41,21 @@ impl fmt::Display for Atom {
     }
 }
 
-fn split_to_residue(atoms: &Vec<Atom>) -> Vec<Residue> {
-    let max_size = atoms.iter().map(|atom| atom.res_number).max().unwrap_or(0);
-    let mut residues = vec![Residue::new(); max_size as usize];
-    for atom in atoms {
-        residues[(atom.res_number - 1) as usize].insert(atom.atom_name.clone(), atom.clone());
+impl Residue {
+    pub fn new(number: i32, name: &str) -> Residue {
+        Residue {
+            number: number,
+            name:   name.to_string(),
+            atoms:  HashMap::new()
+        }
     }
-    residues
 }
 
 impl Structure {
     pub fn new(title: String, atoms: Vec<Atom>, box_size: Vector3d) -> Structure {
         Structure {
-            title: title,
-            atoms: atoms,
+            title:    title,
+            atoms:    atoms,
             box_size: box_size
         }
     }
@@ -63,7 +69,24 @@ impl Structure {
     }
 
     pub fn residues(&self) -> Vec<Residue> {
-        split_to_residue(&self.atoms)
+        let max_size = self.atoms.iter()
+                                 .map(|atom| atom.res_number)
+                                 .max()
+                                 .unwrap_or(0)
+                                 as usize;
+        let mut residues = vec![Residue::new(0, ""); max_size];
+        for atom in &self.atoms {
+            let idx = (atom.res_number - 1) as usize;
+            if residues[idx].name.is_empty() {
+                residues[idx].number = atom.res_number;
+                residues[idx].name = atom.res_name.clone();
+            } else {
+                assert!(residues[idx].number == atom.res_number);
+                assert!(residues[idx].name == atom.res_name);
+            }
+            residues[idx].atoms.insert(atom.atom_name.clone(), atom.clone());
+        }
+        residues
     }
 
     pub fn box_size(&self) -> &Vector3d {
