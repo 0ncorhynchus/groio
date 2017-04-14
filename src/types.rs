@@ -22,7 +22,7 @@ pub struct Structure {
 
 impl fmt::Display for Atom {
     fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
-        write!(f, "{:>5}{:<5}{:>5}{:>5}{:>8.3}{:>8.3}{:>8.3}{:>9.4}{:>9.4}{:>9.4}",
+        write!(f, "{:>5}{:<5}{:>5}{:>5}{:>8.3}{:>8.3}{:>8.3}{:>8.4}{:>8.4}{:>8.4}",
                self.res_number,
                self.res_name,
                self.atom_name,
@@ -111,7 +111,7 @@ mod tests {
             position: Vector3d::new(1.0, 2.0, 3.0),
             velocity: Vector3d::new(4.0, 5.0, 6.0)
         };
-        assert_eq!("    1ALA      H    1   1.000   2.000   3.000   4.0000   5.0000   6.0000",
+        assert_eq!("    1ALA      H    1   1.000   2.000   3.000  4.0000  5.0000  6.0000",
                    atom.to_string());
     }
 
