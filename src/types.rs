@@ -16,7 +16,7 @@ pub type Residue = HashMap<String, Atom>;
 
 pub struct Structure {
     title: String,
-    residues: Vec<Residue>,
+    atoms: Vec<Atom>,
     box_size: Vector3d,
 }
 
@@ -36,11 +36,11 @@ impl fmt::Display for Atom {
     }
 }
 
-fn split_to_residue(atoms: Vec<Atom>) -> Vec<Residue> {
+fn split_to_residue(atoms: &Vec<Atom>) -> Vec<Residue> {
     let max_size = atoms.iter().map(|atom| atom.res_number).max().unwrap_or(0);
     let mut residues = vec![Residue::new(); max_size as usize];
     for atom in atoms {
-        residues[(atom.res_number - 1) as usize].insert(atom.atom_name.clone(), atom);
+        residues[(atom.res_number - 1) as usize].insert(atom.atom_name.clone(), atom.clone());
     }
     residues
 }
@@ -49,7 +49,7 @@ impl Structure {
     pub fn new(title: String, atoms: Vec<Atom>, box_size: Vector3d) -> Structure {
         Structure {
             title: title,
-            residues: split_to_residue(atoms),
+            atoms: atoms,
             box_size: box_size
         }
     }
@@ -58,23 +58,12 @@ impl Structure {
         &self.title
     }
 
-    pub fn atoms(&self) -> Vec<&Atom> {
-        let mut atoms = Vec::new();
-        for i in 0..self.residues.len() {
-            let residue = &self.residues[i];
-            for key in residue.keys() {
-                match residue.get(key) {
-                    Some(atom) => atoms.push(atom),
-                    None => {}
-                }
-            }
-        }
-        atoms.sort_by_key(|&atom| atom.atom_number);
-        atoms
+    pub fn atoms(&self) -> &Vec<Atom> {
+        &self.atoms
     }
 
-    pub fn residues(&self) -> &Vec<Residue> {
-        &self.residues
+    pub fn residues(&self) -> Vec<Residue> {
+        split_to_residue(&self.atoms)
     }
 
     pub fn box_size(&self) -> &Vector3d {
